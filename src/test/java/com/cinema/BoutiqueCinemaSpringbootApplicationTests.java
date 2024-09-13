@@ -8,6 +8,8 @@ class BoutiqueCinemaSpringbootApplicationTests {
 
     @Test
     void contextLoads() {
+        String sibal;
+        sibal = "깃허브 ㅅㅂ";
     }
 
 }
