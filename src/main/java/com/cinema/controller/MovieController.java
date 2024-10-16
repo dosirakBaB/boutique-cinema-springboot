@@ -1,10 +1,10 @@
 package com.cinema.controller;
 
 import com.cinema.dto.movie.MovieDTO;
-import com.cinema.repository.MovieRepository;
 import com.cinema.service.MovieService;
 import com.cinema.util.CustomFileUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -84,22 +83,6 @@ public class MovieController {
         return movieService.getMoviesEarliestByDate(pageable);
     }
 
-    @GetMapping("/list/theaterNum") // 상영관번호별 영화 목록 조회
-    public Page<MovieDTO> getMoviesByTheater(
-            @RequestParam Integer theaterNum,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) throws Exception {
-
-        // 상영관 번호 검증 ( 0과 1이 아닐경우 오류 )
-        if (theaterNum < 0 || theaterNum > 1) {
-            return null;
-        }
-
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return movieService.getMoviesByTheaterNum(theaterNum, pageable);
-    }
-
-
     @PutMapping("/{movieNum}") // 영화 수정
     public ResponseEntity<Void> modifyMovie(
             @PathVariable Long movieNum,
@@ -128,6 +111,11 @@ public class MovieController {
     public ResponseEntity<Void> removeMovie(@PathVariable Long movieNum) throws Exception {
         movieService.remove(movieNum);
         return ResponseEntity.noContent().build(); // 삭제 성공 응답
+    }
+
+    @GetMapping("/view/{posterUrl}")
+    public ResponseEntity<Resource> viewFileget(@PathVariable String posterUrl) throws Exception {
+        return fileUtil.getFile(posterUrl);
     }
 
     private boolean isValidImageFile(String filename) {   // 파일 형식을 검증하는 메소드

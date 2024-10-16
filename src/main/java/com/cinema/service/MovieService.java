@@ -15,5 +15,4 @@ public interface MovieService {
     Page<MovieDTO> findByKorTitle(String korTitle, Pageable pageable) throws Exception;  // 목록 조회 (제목 검색)
     Page<MovieDTO> getMoviesLatestByDate(Pageable pageable) throws Exception;   // 최신순으로 정렬된 목록 조회
     Page<MovieDTO> getMoviesEarliestByDate(Pageable pageable) throws Exception;   // 오래된순으로 정렬된 목록 조회
-    Page<MovieDTO> getMoviesByTheaterNum(Integer theaterNum, Pageable pageable) throws Exception;  // 상영관 번호로 조회
 }
