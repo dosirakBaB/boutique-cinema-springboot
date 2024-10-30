@@ -68,7 +68,7 @@ public class QuestionServiceImpl implements QuestionService {
   @Override // 질문 리스트
   public Page<QuestionDTO> getfindAll(Pageable pageable) throws Exception {
     return questionRepository
-        .findAll(pageable)
+        .findLatestByDate(pageable)
         .map(question -> modelMapper.map(question, QuestionDTO.class));
   }
 }
