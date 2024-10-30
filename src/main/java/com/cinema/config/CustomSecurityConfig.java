@@ -25,55 +25,58 @@ import java.util.Arrays;
 @EnableMethodSecurity
 public class CustomSecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.cors(httpSecurityCorsConfigurer -> {
-            httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
-        });
+    http.cors(httpSecurityCorsConfigurer -> {
+      httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource());
+    });
 
-        http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.csrf(config -> config.disable());      // csrf 설정
+    http.sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+    http.csrf(config -> config.disable());      // csrf 설정
 
-        // formLogin 설정을 auth 밖에서 별도로 설정
-        http.formLogin(config -> {
-            config.loginPage("/api/member/login")      // 로그인 페이지
-                    .successHandler(new APILoginSuccessHandler())
-                    .failureHandler(new APILoginFailHandler())
-                    .usernameParameter("id")             // 사용자 이름 필드 이름 설정
-                    .passwordParameter("password");
-//                    .successHandler(new APILoginSuccessHandler())
-//                    .failureHandler(new APILoginFailHandler())
-//                    .defaultSuccessUrl("/")         // 로그인 성공 시 이동할 페이지
-//                    .permitAll();
-        });
-        
-        http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);     // JWT 체크 추가
+//        http.authorizeRequests(authorizeRequests ->
+//                authorizeRequests
+//                        .requestMatchers("/reserve").hasAnyRole("ROLE_USER", "ROLE_ADMIN") // /reserve 엔드포인트 보호
+//                        .anyRequest().permitAll() // 다른 모든 요청은 인증 필요
+//
+//        );
 
-        http.exceptionHandling(config -> {
-            config.accessDeniedHandler(new CustomAccessDeniedHandler());
-        });
+    // formLogin 설정을 auth 밖에서 별도로 설정
+    http.formLogin(config -> {
+      config.loginPage("/api/member/login")      // 로그인 페이지
+              .successHandler(new APILoginSuccessHandler())
+              .failureHandler(new APILoginFailHandler())
+              .usernameParameter("id")             // 사용자 이름 필드 이름 설정
+              .passwordParameter("password");
+    });
 
-        return http.build();
-    }
+    http.addFilterBefore(new JWTCheckFilter(), UsernamePasswordAuthenticationFilter.class);     // JWT 체크 추가
 
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {      // 비밀번호 암호화
-        return new BCryptPasswordEncoder();
-    }
+    http.exceptionHandling(config -> {
+      config.accessDeniedHandler(new CustomAccessDeniedHandler());
+    });
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+    return http.build();
+  }
 
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        configuration.setAllowCredentials(true);
+  @Bean
+  public BCryptPasswordEncoder bCryptPasswordEncoder() {      // 비밀번호 암호화
+    return new BCryptPasswordEncoder();
+  }
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
 
-        return source;
-    }
+    configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+    configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE"));
+    configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+
+    return source;
+  }
 }
