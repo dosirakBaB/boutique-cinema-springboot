@@ -21,6 +21,9 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
   @Query("SELECT m FROM Movie m ORDER BY m.regDate") // 개봉일 기준으로 오래된순으로 정렬하는 쿼리
   Page<Movie> findEarliestByDate(Pageable pageable); // 페이징 기능 지원
 
+  @Query("SELECT m FROM Movie m ORDER BY m.movieStartDate") // 등록일 기준으로 오래된순으로 정렬하는 쿼리
+  Page<Movie> findLatestByMovieStartDay(Pageable pageable); // 페이징 기능 지원
+
   // 개봉일과 상영종료일 사이의 영화를 찾는 쿼리 메서드
   @Query(
       "SELECT m FROM Movie m WHERE m.movieStartDate <= :targetDate AND m.movieEndDate >= :targetDate")

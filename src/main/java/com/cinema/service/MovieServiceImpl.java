@@ -89,4 +89,11 @@ public class MovieServiceImpl implements MovieService {
         .map(movie -> modelMapper.map(movie, MovieDTO.class)) // Entity -> DTO 변환
         .collect(Collectors.toList());
   }
+
+  @Override // 등록일 순 정렬
+  public Page<MovieDTO> getMoviesByStartDate(Pageable pageable) throws Exception {
+    return movieRepository
+        .findLatestByMovieStartDay(pageable)
+        .map(movie -> modelMapper.map(movie, MovieDTO.class));
+  }
 }

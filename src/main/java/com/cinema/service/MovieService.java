@@ -27,4 +27,6 @@ public interface MovieService {
   Page<MovieDTO> getMoviesEarliestByDate(Pageable pageable) throws Exception; // 오래된순으로 정렬된 목록 조회
 
   List<MovieDTO> getMoviesByDate(LocalDate targetDate) throws Exception;
+
+  Page<MovieDTO> getMoviesByStartDate(Pageable pageable) throws Exception; // 등록일 순 정렬
 }
